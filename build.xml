@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<project name="SpringUserManagement" basedir="." default="build">
+   <property file="build.properties"> </property>
+ 
+ <path id="master-classpath">
+	  <fileset dir="${lib.dir}">
+         <include name="*.jar"/>
+      </fileset>	
+      <fileset dir="${lib.dir}/spring">
+         <include name="*.jar"/>
+      </fileset>
+	     <fileset dir="${lib.dir}/hibernate">
+         <include name="*.jar"/>
+      </fileset>
+      <pathelement path="${build.dir}"/>
+   </path>
+  
+	<target name="init" >
+			<mkdir dir="${dist.dir}"/>
+			<mkdir dir="${dist.dir}/${project.name}"/>
+			<mkdir dir="${dist.dir}/${project.name}/css"/>
+			<mkdir dir="${dist.dir}/${project.name}/WEB-INF"/>
+			<mkdir dir="${dist.dir}/${project.name}/WEB-INF/lib"/>
+			<mkdir dir="${dist.dir}/${project.name}/WEB-INF/classes"/>
+			<mkdir dir="${dist.dir}/${project.name}/WEB-INF/conf"/>
+			<mkdir dir="${dist.dir}/${project.name}/WEB-INF/jsp"/>
+			<mkdir dir="${dist.dir}/${project.name}/css"/>
+	</target>
+
+	<target name="clean" description="Clean output directories">
+      <delete>
+         <fileset dir="${build.dir}">
+            <include name="**/*.class"/>
+         </fileset>
+      </delete>
+   </target>
+   
+   <target name="build" description="Compile source tree java files" depends="init,clean,conf,resource">
+      <mkdir dir="${build.dir}"/>
+      <javac destdir="${build.dir}" source="1.6" target="1.6">
+         <src path="${src.dir}"/>
+         <classpath refid="master-classpath"/>
+      </javac>
+   </target>
+
+   <target name="conf" description="copy config files">
+	 <copy file="${conf.dir}/web.xml" todir="${dist.dir}/${project.name}/WEB-INF"/>
+	 <copy file="${conf.dir}/spring/base-servlet.xml" todir="${dist.dir}/${project.name}/WEB-INF"/>
+	 <copy todir="${dist.dir}/${project.name}/WEB-INF/conf">
+		<fileset dir="${conf.dir}/spring" >
+						<include name="*.xml"/>
+		</fileset>
+	</copy>
+   </target>
+
+   <target name="resource" description="copy resource files">
+	 <copy todir="${dist.dir}/${project.name}/WEB-INF/jsp">
+		<fileset dir="${jsp.dir}" >
+						<include name="*.jsp"/>
+		</fileset>
+	</copy>
+	<copy todir="${dist.dir}/${project.name}/css">
+		<fileset dir="${css.dir}" >
+						<include name="*.css"/>
+		</fileset>
+	</copy>
+	<copy todir="${dist.dir}/${project.name}/WEB-INF/lib">
+		<fileset dir="${lib.dir}" >
+						<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${lib.dir}/hibernate" >
+						<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${lib.dir}/spring" >
+						<include name="*.jar"/>
+		</fileset>
+	</copy>
+   </target>
+   
+   <target name="deploy" description="deploy project">
+	 <copy todir="${deploy.dir}/">
+		<fileset dir="${dist.dir}" >
+						<include name="/**/*.*"/>
+		</fileset>
+	</copy>
+   </target>
+</project>
